@@ -1,0 +1,19 @@
+# Temporary scripts
+*.js
+*.ps1
+
+# Node modules
+node_modules/
+
+# Backups (too large)
+backup/
+
+# Screenshots
+screenshots/
+
+# Memory files
+memory/
+
+# IDE / OS
+.DS_Store
+Thumbs.db

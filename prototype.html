@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>瑞众保险 - AI投保流程原型 v3（首页+首页2）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ant-blue:#1677ff;
+  --ant-blue-light:#4096ff;
+  --ant-blue-bg:#e6f4ff;
+  --bg:#ffffff;
+  --surface:#ffffff;
+  --surface2:#fafafa;
+  --border:#e8e8e8;
+  --text:#262626;
+  --text2:#595959;
+  --text3:#8c8c8c;
+  --radius:8px;
+  --shadow:0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.08);
+  --shadow-xl:0 8px 32px rgba(0,0,0,0.12);
+}
+body{background:var(--fufu-bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+
+/* 登录页 */
+#page-login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8f0fe 0%,#f5f5f5 100%);padding:20px}
+.login-container{width:100%;max-width:380px;padding:40px 32px;background:#fff;border-radius:16px;box-shadow:var(--shadow-xl);border:1px solid var(--border)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo .logo-icon{width:64px;height:64px;background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;box-shadow:0 4px 12px rgba(22,119,255,0.3)}
+.login-logo h1{font-size:22px;font-weight:600;color:var(--text);margin-bottom:4px;letter-spacing:-0.3px}
+.login-logo p{font-size:13px;color:var(--text3)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.form-input{width:100%;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text);outline:none;transition:all 0.2s;box-sizing:border-box}
+.form-input:focus{border-color:var(--ant-blue);box-shadow:0 0 0 2px rgba(22,119,255,0.1)}
+.form-input::placeholder{color:var(--text3)}
+.slider-verify{width:100%;height:48px;background:#f0f5ff;border-radius:24px;position:relative;margin-bottom:20px;border:1px solid #d9e8ff;display:flex;align-items:center;overflow:hidden;box-shadow:inset 0 2px 4px rgba(22,119,255,0.06)}
+.slider-track{position:absolute;top:0;left:0;right:0;bottom:0}
+.slider-thumb{position:absolute;left:3px;top:3px;bottom:3px;width:42px;background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;z-index:2;box-shadow:0 2px 8px rgba(22,119,255,0.4);transition:left 0.1s}
+.slider-text{position:absolute;width:100%;text-align:center;font-size:13px;color:#8c8c8c;z-index:1;pointer-events:none;letter-spacing:0.5px}
+.login-btn{width:100%;padding:13px;background:var(--ant-blue);border:none;border-radius:var(--radius);font-size:15px;font-weight:500;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(22,119,255,0.3);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+.login-btn:hover{background:#4096ff;box-shadow:0 4px 12px rgba(22,119,255,0.4)}
+.login-footer{text-align:center;margin-top:20px;font-size:12px;color:var(--text3)}
+
+/* 主内容区 */
+.page-hidden{display:none}
+#main-display{display:block}
+
+/* 页面滚动区 */
+.page-wrapper{display:block;padding:0;background:var(--bg);min-height:100vh}
+.pages-scroll{display:flex;flex-direction:column;gap:0;align-items:center;padding:0;width:100%;box-sizing:border-box}
+
+/* 页面区块 */
+.page-section{width:100%;max-width:420px;background:#fff;min-height:100vh;border-radius:0;margin-bottom:0}
+.page-label{display:none}
+
+/* 状态栏 */
+.status-bar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:14px;font-weight:500;color:var(--text);background:#fff}
+
+/* 首页 */
+.home-header{padding:12px 20px 30px;background:linear-gradient(135deg,#5BA4F5,#7BB8F8);border-radius:0 0 8px 8px;margin-bottom:0}
+.home-greeting{font-size:18px;font-weight:600;color:var(--text);margin-bottom:2px}
+.home-sub{font-size:13px;color:var(--text3)}
+.home-search{ margin:12px 20px 16px}
+.home-search-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f5f5;border-radius:10px;font-size:13px;color:var(--text3)}
+
+/* 通知卡片 */
+.notif-btn{position:relative;cursor:pointer;width:36px;height:36px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border)}
+.notif-badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#ff4d4f;border-radius:50%;font-size:10px;color:#fff;display:flex;align-items:center;justify-content:center}
+.notif-card{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:var(--radius);cursor:pointer;transition:all 0.2s;border:1px solid var(--border);margin:0 20px 10px}
+.notif-card:hover{border-color:var(--ant-blue)}
+.notif-icon{width:36px;height:36px;background:var(--ant-blue-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.notif-content{flex:1}
+.notif-title{font-size:14px;font-weight:500;color:var(--text)}
+.notif-desc{font-size:12px;color:var(--text3);margin-top:2px}
+.notif-time{font-size:11px;color:var(--text3)}
+
+/* 快捷入口 */
+.shortcuts-section{padding:16px 20px}
+.shortcuts-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+.shortcuts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.shortcut-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;background:#fff;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;font-size:12px;color:var(--text2)}
+.shortcut-item:hover{border-color:var(--ant-blue);box-shadow:var(--shadow)}
+.shortcut-icon{width:36px;height:36px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
+/* 产品卡片 */
+.products-section{padding:16px 20px}
+.products-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+.product-card{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;margin-bottom:10px}
+.product-card:hover{border-color:var(--ant-blue)}
+.product-icon{width:44px;height:44px;background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
+.product-info{flex:1}
+.product-name{font-size:14px;font-weight:500;color:var(--text)}
+.product-desc{font-size:12px;color:var(--text3);margin-top:2px}
+.product-tag{padding:2px 8px;background:#e6f4ff;color:#1677ff;border-radius:4px;font-size:11px}
+
+/* AI对话气泡 */
+.chat-section{padding:16px 20px}
+.ai-intro-bar{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f0f5ff;border:1px solid #d9e8ff;border-radius:10px}
+.ai-avatar{width:32px;height:32px;background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff}
+.ai-bubble{background:#f5f5f5;border:1px solid var(--border);border-radius:12px 12px 12px 4px;padding:12px 14px;font-size:14px;color:var(--text);line-height:1.6;max-width:85%;margin-top:8px}
+.user-bubble{background:var(--ant-blue);color:#fff;border-radius:12px 12px 4px 12px;padding:12px 14px;font-size:14px;line-height:1.6;max-width:75%;margin-left:auto;margin-top:8px}
+.chat-time{font-size:11px;color:var(--text3);text-align:center;margin:8px 0}
+
+/* 快捷回复标签 */
+.quick-replies-bar{display:flex;gap:8px;padding:12px 20px;flex-wrap:wrap}
+.quick-tag{padding:8px 16px;background:#fff;border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.quick-tag:hover{border-color:var(--ant-blue);color:var(--ant-blue)}
+
+/* 选项按钮 */
+.option-btn{padding:10px 20px;background:#fff;border:1px solid var(--border);border-radius:20px;font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.2s;box-shadow:none}
+.option-btn.selected{background:var(--ant-blue);border-color:var(--ant-blue);color:#fff;box-shadow:0 2px 8px rgba(22,119,255,0.3)}
+.option-btn:hover:not(.selected){border-color:var(--ant-blue);color:var(--ant-blue)}
+
+/* 底部导航 */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;height:60px;background:var(--fufu-surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 16px;z-index:100}
+.nav-item{font-size:10px;font-weight:500;color:var(--fufu-text3);cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;border-radius:8px}
+.nav-item.active{color:var(--fufu-orange)}
+.nav-icon{font-size:20px;margin-bottom:2px}
+
+/* 隐私条款页 */
+.page-nav{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#fff;border-bottom:1px solid var(--border)}
+.nav-back{font-size:20px;color:var(--text2);cursor:pointer;padding:8px}
+.nav-title{font-size:16px;font-weight:600;color:var(--text)}
+.nav-close{font-size:20px;color:var(--text2);cursor:pointer;padding:8px}
+.page-content{padding:20px 0 80px}
+.content-body{padding:16px 20px;font-size:14px;color:var(--text2);line-height:1.8}
+.content-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:12px}
+
+/* 投保计划页 */
+.plan-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 20px 12px}
+.plan-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+.plan-item{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;color:var(--text2);border-bottom:1px solid #f5f5f5}
+.plan-item:last-child{border-bottom:none}
+
+/* 电子签名页 */
+.signature-area{background:#fff;border:2px dashed var(--border);border-radius:12px;margin:20px;padding:40px;text-align:center}
+.signature-hint{font-size:14px;color:var(--text3)}
+
+/* 付款页 */
+.payment-method{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 20px 12px;display:flex;align-items:center;justify-content:space-between}
+.pay-icon{font-size:24px}
+.pay-name{font-size:14px;font-weight:500;color:var(--text)}
+
+/* 投保计划书预览 */
+.preview-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin:0 20px 16px;overflow:hidden}
+.preview-header{padding:16px;background:#fafafa;border-bottom:1px solid var(--border)}
+.preview-title{font-size:15px;font-weight:600;color:var(--text)}
+
+/* 保单确认 */
+.confirm-item{display:flex;justify-content:space-between;padding:14px 20px;font-size:14px;color:var(--text2);background:#fff;border-bottom:1px solid var(--border)}
+
+/* 投保成功页 */
+.success-page{text-align:center;padding:60px 40px}
+.success-icon{font-size:64px;margin-bottom:20px}
+.success-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--text3);margin-bottom:32px}
+.success-info{background:#f5f5f5;border-radius:12px;padding:20px;text-align:left;font-size:14px;color:var(--text2)}
+
+/* 双录页 */
+.record-timer{text-align:center;padding:20px;background:#fff;border-bottom:1px solid var(--border)}
+.timer-display{font-size:32px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.record-btn{width:64px;height:64px;background:#ff4d4f;border-radius:50%;border:none;cursor:pointer;margin:20px auto;display:block;box-shadow:0 4px 12px rgba(255,77,77,0.3)}
+
+/* 按钮样式 */
+.btn-primary{width:100%;padding:13px;background:var(--ant-blue);border:none;border-radius:var(--radius);font-size:15px;font-weight:500;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(22,119,255,0.3);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+.btn-primary:hover{background:#4096ff}
+.btn-primary-full{width:calc(100% - 40px);margin:0 20px 16px;padding:13px;background:var(--ant-blue);border:none;border-radius:var(--radius);font-size:15px;font-weight:500;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(22,119,255,0.3);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+.btn-primary-full:hover{background:#4096ff}
+.btn-double{width:calc(100% - 40px);margin:0 20px;padding:13px;background:#ff4d4f;border:none;border-radius:var(--radius);font-size:15px;font-weight:500;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(255,77,77,0.3);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s}
+.btn-double:hover{background:#ff7875}
+.icon-btn{width:36px;height:36px;background:#f5f5f5;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all 0.2s}
+
+/* 输入框 */
+.chat-input{flex:1;padding:10px 14px;background:#f5f5f5;border:1px solid var(--border);border-radius:20px;font-size:14px;color:var(--text);outline:none}
+.input-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff;border-top:1px solid var(--border)}
+
+/* FAQ */
+.faq-item{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#fff;border-bottom:1px solid var(--border);cursor:pointer;font-size:14px;color:var(--text2)}
+.faq-item:hover{background:#fafafa}
+
+/* 进度条 */
+.progress-wrap{padding:12px 20px}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text3);margin-bottom:8px}
+.progress-bar{height:4px;background:#f5f5f5;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--ant-blue);border-radius:2px;transition:width 0.3s}
+
+/* 同意条款 */
+.agree-row{display:flex;align-items:center;gap:10px;padding:12px 20px;cursor:pointer;font-size:13px;color:var(--text2)}
+.agree-check{width:20px;height:20px;background:#fff;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text3);transition:all 0.2s}
+.agree-check.checked{background:var(--ant-blue);border-color:var(--ant-blue);color:#fff}
+
+/* 订单卡片 */
+.order-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 20px 12px}
+
+/* 双录记录卡 */
+.double-record-card{background:#fffbf0;border:1px solid #ffe58f;border-radius:var(--radius);padding:16px;margin:0 20px}
+.double-record-title{font-size:14px;font-weight:600;color:#ad6800;margin-bottom:4px}
+.double-record-sub{font-size:12px;color:#ad6800}
+
+
+.page-phone-frame{width:394px;min-height:844px;background:#fff;border-radius:40px;box-shadow:0 8px 40px rgba(0,0,0,0.1);overflow:hidden;border:1px solid rgba(0,0,0,0.04);flex-shrink:0;display:block;margin:0 auto 32px;}
+
+.page-phone-frame{width:394px;min-height:844px;background:#fff;border-radius:40px;box-shadow:0 8px 40px rgba(0,0,0,0.1);overflow:hidden;border:1px solid rgba(0,0,0,0.04);flex-shrink:0;display:block;margin:0 auto 32px;}
+
+
+/* 阿福主色调 */
+:root {
+  --fufu-orange: #FF7043;
+  --fufu-orange-light: #FFAB91;
+  --fufu-orange-bg: #FFF0ED;
+  --fufu-green: #36D399;
+  --fufu-green-bg: #E8F8F0;
+  --fufu-bg: #F7F8FA;
+  --fufu-surface: #ffffff;
+  --fufu-text: #262626;
+  --fufu-text2: #595959;
+  --fufu-text3: #8C8C8C;
+  --fufu-border: #E8E8E8;
+  --fufu-radius: 12px;
+  --fufu-radius-lg: 16px;
+  --fufu-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --fufu-shadow-lg: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* 页面通用背景 */
+.page-phone-frame {
+  background: #ffffff;
+}
+
+/* 登录页手机框架 - 高度自适应 */
+.page-phone-frame.login-frame {
+  min-height: auto;
+  height: auto;
+  border-radius: 32px;
+}
+
+.login-frame .phone-screen-frame {
+  padding: 0;
+}
+
+.login-frame .phone-notch {
+  display: none;
+}
+
+.login-frame .phone-screen {
+  overflow: visible;
+  height: auto;
+}
+
+/* 状态栏 */
+.status-bar {
+  background: var(--fufu-bg);
+  color: var(--fufu-text);
+}
+
+/* 顶部欢迎区 - 阿福风格 */
+.home-header {
+  padding: 12px 20px 30px;
+  background: linear-gradient(135deg, #5BA4F5, #7BB8F8);
+  border-radius: 0 0 8px 8px;
+}
+
+.home-greeting {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.home-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+}
+
+/* 阿福AI助手条 */
+.home-ai-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+.home-ai-icon {
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.home-ai-text {
+  font-size: 13px;
+  color: #fff;
+  flex: 1;
+}
+
+/* 通知卡片 */
+.notification-card {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius);
+  box-shadow: var(--fufu-shadow);
+  border: 1px solid var(--fufu-border);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.notification-card:hover {
+  box-shadow: var(--fufu-shadow-lg);
+  transform: translateY(-1px);
+}
+
+.notification-card:active {
+  transform: translateY(0);
+}
+
+/* 快捷功能入口 */
+.shortcut-item {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius);
+  border: 1px solid var(--fufu-border);
+  padding: 14px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: none;
+}
+
+.shortcut-item:hover {
+  border-color: var(--fufu-orange);
+  box-shadow: var(--fufu-shadow);
+  transform: translateY(-2px);
+}
+
+/* 产品卡片 */
+.product-card {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius);
+  border: 1px solid var(--fufu-border);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: none;
+  margin-bottom: 10px;
+}
+
+.product-card:hover {
+  border-color: var(--fufu-orange);
+  box-shadow: var(--fufu-shadow);
+}
+
+.product-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+/* 阿福气泡 - 助手 */
+.ai-bubble,
+.chat-left {
+  background: var(--fufu-surface);
+  border: 1px solid var(--fufu-border);
+  border-radius: 16px 16px 16px 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--fufu-text);
+  line-height: 1.6;
+  max-width: 85%;
+  box-shadow: var(--fufu-shadow);
+}
+
+/* 阿福气泡 - 用户 */
+.user-bubble,
+.chat-right {
+  background: var(--fufu-orange);
+  color: #fff;
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 75%;
+  box-shadow: 0 2px 8px rgba(255,112,67,0.3);
+}
+
+/* 阿福头像 */
+.fufu-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--fufu-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.fufu-avatar-small {
+  width: 28px;
+  height: 28px;
+  background: var(--fufu-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* 底部Tab */
+.bottom-tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  background: var(--fufu-surface);
+  border-top: 1px solid var(--fufu-border);
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  color: var(--fufu-text3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  color: var(--fufu-orange);
+}
+
+.tab-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* 通用按钮 */
+.btn-fufu {
+  width: 100%;
+  padding: 13px;
+  background: var(--fufu-orange);
+  border: none;
+  border-radius: var(--fufu-radius);
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(255,112,67,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-fufu:hover {
+  background: #FF8A65;
+  box-shadow: 0 4px 16px rgba(255,112,67,0.45);
+  transform: translateY(-1px);
+}
+
+.btn-fufu:active {
+  transform: translateY(0);
+}
+
+.btn-fufu-outline {
+  width: 100%;
+  padding: 13px;
+  background: var(--fufu-surface);
+  border: 1px solid var(--fufu-orange);
+  border-radius: var(--fufu-radius);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--fufu-orange);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-fufu-outline:hover {
+  background: var(--fufu-orange-bg);
+}
+
+/* 聊天输入框 */
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--fufu-surface);
+  border-top: 1px solid var(--fufu-border);
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--fufu-bg);
+  border: 1px solid var(--fufu-border);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--fufu-text);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.chat-input:focus {
+  border-color: var(--fufu-orange);
+  box-shadow: 0 0 0 2px rgba(255,112,67,0.1);
+}
+
+/* 标签/标签页 */
+.tag-fufu {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--fufu-orange-bg);
+  color: var(--fufu-orange);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-outline {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--fufu-border);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--fufu-text2);
+}
+
+/* 列表项 */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--fufu-surface);
+  border-bottom: 1px solid var(--fufu-border);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--fufu-text);
+  transition: all 0.2s;
+}
+
+.list-item:hover {
+  background: #fafafa;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+/* 卡片容器 */
+.card-fufu {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius-lg);
+  border: 1px solid var(--fufu-border);
+  box-shadow: var(--fufu-shadow);
+  overflow: hidden;
+}
+
+/* 隐私条款页 */
+.page-nav {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--fufu-surface);
+  border-bottom: 1px solid var(--fufu-border);
+}
+
+.nav-back {
+  font-size: 20px;
+  color: var(--fufu-text2);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.nav-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fufu-text);
+}
+
+/* 投保计划卡片 */
+.plan-card {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius-lg);
+  border: 1px solid var(--fufu-border);
+  box-shadow: var(--fufu-shadow);
+  padding: 16px;
+  margin: 0 16px 12px;
+}
+
+.plan-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fufu-text);
+  margin-bottom: 12px;
+}
+
+.plan-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--fufu-text2);
+  border-bottom: 1px solid var(--fufu-border);
+}
+
+.plan-item:last-child {
+  border-bottom: none;
+}
+
+/* 进度条 */
+.progress-wrap {
+  padding: 12px 16px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--fufu-text3);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--fufu-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--fufu-orange);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* 勾选框 */
+.check-fufu {
+  width: 22px;
+  height: 22px;
+  background: var(--fufu-surface);
+  border: 2px solid var(--fufu-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.check-fufu.checked {
+  background: var(--fufu-orange);
+  border-color: var(--fufu-orange);
+  color: #fff;
+}
+
+/* 成功页 */
+.success-icon {
+  font-size: 72px;
+  margin-bottom: 20px;
+}
+
+.success-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--fufu-text);
+  margin-bottom: 8px;
+}
+
+.success-sub {
+  font-size: 14px;
+  color: var(--fufu-text3);
+  margin-bottom: 32px;
+}
+
+/* 双录页 */
+.record-timer {
+  text-align: center;
+  padding: 20px;
+  background: var(--fufu-surface);
+  border-bottom: 1px solid var(--fufu-border);
+}
+
+.timer-display {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--fufu-orange);
+  font-variant-numeric: tabular-nums;
+}
+
+.record-btn {
+  width: 72px;
+  height: 72px;
+  background: #EF4444;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  margin: 20px auto;
+  display: block;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.4);
+  position: relative;
+}
+
+.record-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+/* FAQ项 */
+.faq-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--fufu-surface);
+  border-bottom: 1px solid var(--fufu-border);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--fufu-text2);
+  transition: all 0.2s;
+}
+
+.faq-item:hover {
+  background: #fafafa;
+  color: var(--fufu-orange);
+}
+
+/* 订单卡片 */
+.order-card {
+  background: var(--fufu-surface);
+  border-radius: var(--fufu-radius-lg);
+  border: 1px solid var(--fufu-border);
+  box-shadow: var(--fufu-shadow);
+  padding: 16px;
+  margin: 0 16px 12px;
+}
+
+/* 双录提示卡 */
+.double-record-card {
+  background: #FFF7ED;
+  border: 1px solid #FFE4CC;
+  border-radius: var(--fufu-radius);
+  padding: 14px;
+  margin: 0 16px 12px;
+}
+
+/* 消息提醒按钮 */
+.notif-btn {
+  position: relative;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  background: #EF4444;
+  border-radius: 50%;
+  font-size: 10px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border: 2px solid #FF7043;
+}
+
+/* 快捷回复标签 */
+.quick-tag {
+  display: inline-block;
+  padding: 8px 16px;
+  background: var(--fufu-surface);
+  border: 1px solid var(--fufu-border);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--fufu-text2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-tag:hover {
+  border-color: var(--fufu-orange);
+  color: var(--fufu-orange);
+  background: var(--fufu-orange-bg);
+}
+
+/* 分隔线 */
+.divider {
+  height: 1px;
+  background: var(--fufu-border);
+  margin: 0;
+}
+
+/* 阿福产品图标渐变 */
+.product-icon.medical {
+  background: linear-gradient(135deg, #36D399, #10B981);
+}
+
+.product-icon.critical {
+  background: linear-gradient(135deg, #FF7043, #FF5722);
+}
+
+.product-icon.life {
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+}
+
+/* Section标题 */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fufu-text);
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+
+
+/* P6 确认支付按钮 */
+.pay-btn{
+  display:block;
+  width:calc(100% - 40px);
+  margin:20px auto;
+  padding:16px;
+  background:var(--ant-blue);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.pay-btn:hover{background:var(--ant-blue-light)}
+.pay-btn-lg{
+  padding:18px 32px;
+  font-size:18px;
+  border-radius:14px;
+  letter-spacing:1px;
+}
+</style>
+.device-shell{width:410px;height:860px;background:#1A1A2E;border-radius:48px;padding:8px;box-shadow:0 8px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.1);position:relative;flex-shrink:0;}.device-shell::before{display:none}.device-shell::after{display:none}.side-btn-left-top{position:absolute;left:-2px;top:140px;width:2px;height:28px;background:#1A1A2E;border-radius:2px 0 0 2px;}.side-btn-left-bottom{position:absolute;left:-2px;top:190px;width:2px;height:50px;background:#1A1A2E;border-radius:2px 0 0 2px;}.side-btn-right{position:absolute;right:-2px;top:175px;width:2px;height:60px;background:#1A1A2E;border-radius:0 2px 2px 0;}.phone-body-shell{width:100%;height:100%;background:#FFFFFF;border-radius:40px;overflow:hidden;position:relative;}
+</style>
+</head>
+<body>
+
+
+
+<div class="page-phone-frame login-frame">
+  <div class="phone-screen-frame">
+    <div class="phone-screen">
+      <div id="page-login" style="background:#fff;min-height:50vh;">
+        <div style="background:#fff;padding:24px 28px 32px;display:flex;flex-direction:column;align-items:center;">
+          <div style="width:72px;height:72px;background:linear-gradient(135deg,#1677ff,#4096ff);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:16px;box-shadow:0 6px 16px rgba(22,119,255,0.3);">&#x1F6E1;</div>
+          <div style="font-size:22px;font-weight:600;color:#1a1a2e;margin-bottom:4px;">瑞众保险</div>
+          <div style="font-size:13px;color:#8c8c8c;margin-bottom:32px;">AI智能投保 &middot; 让保险更简单</div>
+          <div style="width:100%;">
+            <div style="margin-bottom:16px;">
+              <div style="font-size:13px;font-weight:500;color:#595959;margin-bottom:6px;">账号 / 手机号</div>
+              <input class="form-input" placeholder="请输入手机号或账号" value="13812345678">
+            </div>
+            <div style="margin-bottom:20px;">
+              <div style="font-size:13px;font-weight:500;color:#595959;margin-bottom:6px;">密码</div>
+              <input class="form-input" type="password" placeholder="请输入密码" value="********">
+            </div>
+            <div class="slider-verify" id="sliderVerify">
+              <div class="slider-track"></div>
+              <div class="slider-thumb" id="sliderThumb">&#x2794;</div>
+              <div class="slider-text" id="sliderText">按住滑块，拖动到最右侧 &gt;</div>
+            </div>
+            <button class="login-btn" onclick="showPage('main-display')">登 录</button>
+            <div style="text-align:center;margin-top:16px;font-size:12px;color:#8c8c8c;">&copy; 2026 瑞众保险 版权所有</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div id="main-display" class="page-hidden">
+  <div class="page-wrapper">
+    <div class="pages-scroll">
+
+      <!-- P1: 首页 -->
+      
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P1 &middot; AI投保首页（新版）</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <!-- 顶部欢迎区 -->
+              <div class="home-header" style="background:linear-gradient(135deg,#5BA4F5,#7BB8F8);border-radius:0 0 8px 8px;padding-bottom:30px;margin-bottom:0;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div style="padding:12px 14px;">
+                    <div class="home-greeting">您好，欢迎回来！&#x1F44B;</div>
+                    <div class="home-sub">今天想了解哪类产品呢？</div>
+                  </div>
+                  <!-- 消息提醒按钮 -->
+                  <div style="position:relative;cursor:pointer;">
+                    <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F514;</div>
+                    <!-- 红点角标 -->
+                    <div style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;">3</div>
+                  </div>
+                </div>
+                <div class="home-ai-bar">
+                  <div class="home-ai-icon">&#x1F916;</div>
+                  <div class="home-ai-text">我是瑞众保险智能助手小瑞，随时为您服务~</div>
+                </div>
+              </div>
+              
+
+              <!-- 消息提醒区 -->
+              <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+                <div class="notification-card" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                  <div style="width:36px;height:36px;background:rgba(239,68,68,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x1F4B3;</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:600;color:#1a1a2e;"><span style="color:#EF4444;font-size:20px;">&#x26A0;</span> 您有待支付保单</div>
+                    <div style="font-size:12px;color:#8896a6;margin-top:2px;">传家宝（鑫典藏）- 待支付 ¥8,580.00</div>
+                  </div>
+                  <div style="font-size:16px;color:#cbd5e1;">&rsaquo;</div>
+                </div>
+                <div class="notification-card" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                  <div style="width:36px;height:36px;background:rgba(34,197,94,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x2705;</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:600;color:#1a1a2e;">&#x1F389; 您的电子保单已生成</div>
+                    <div style="font-size:12px;color:#8896a6;margin-top:2px;">医疗险 - 保单号：RZ202604200001</div>
+                  </div>
+                  <div style="font-size:16px;color:#cbd5e1;">&rsaquo;</div>
+                </div>
+              </div>
+
+              <!-- 快捷功能入口（图标形式） -->
+              <div style="padding:0 16px 12px;">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#1E6FD9,#4A90E2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4CB;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">计划书</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4B0;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">微投</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#ef4444,#f87171);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F3AC;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">双录</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4A1;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">理赔</span>
+                  </div>
+                  <!-- 更多入口 -->
+                  <div id="moreShortcuts-p1" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#f8fafc;border-radius:14px;border:1px dashed #cbd5e1;cursor:pointer;transition:all 0.2s;" onclick="toggleMoreShortcuts('p1')">
+                    <div style="width:40px;height:40px;background:#e8edf2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#8896a6;">&#x22EE;</div>
+                    <span style="font-size:11px;color:#8896a6;font-weight:500;">更多</span>
+                  </div>
+                  <!-- 展开的更多功能（默认隐藏） -->
+                  <div id="moreShortcutsPanel-p1" style="width:100%;display:none;gap:10px;flex-wrap:wrap;margin-top:4px;">
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#34d399);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4CB;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">我的保单</span>
+                    </div>
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#ec4899,#f472b6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x23E9;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">继续投保</span>
+                    </div>
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x2753;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">常见问题</span>
+                    </div>
+                    <div style="width:calc(25% - 8px);display:flex;justify-content:center;padding:14px 4px;cursor:pointer;" onclick="toggleMoreShortcuts('p12')">
+                      <span style="font-size:12px;color:#8896a6;">收起 &#x25B2;</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 产品类型区 -->
+              <div class="home-products">
+                <div class="section-title">选择产品类型</div>
+                <div class="product-cards">
+                  <!-- 医疗险（可展开） -->
+                  <div class="product-card" onclick="toggleProducts('p1')" style="cursor:pointer;">
+                    <div class="product-icon medical">&#x1F3E5;</div>
+                    <div class="product-info"><h3>医疗险</h3><p>报销医疗费用，减轻看病负担</p></div>
+                    <div class="product-arrow" id="product-arrow-p1">&#x25BC;</div>
+                  </div>
+                  <!-- 展开的子产品 -->
+                  <div id="product-children-p1" style="display:none;padding-left:56px;border-left:2px solid #e8edf2;margin:-8px 16px 8px;padding-top:4px;">
+                    <div class="product-card" style="background:#f8f9ff;">
+                      <div class="product-icon critical">&#x1F49B;</div>
+                      <div class="product-info"><h3>重疾险</h3><p>一次性给付，保障重大疾病</p></div>
+                      <div class="product-arrow">&rsaquo;</div>
+                    </div>
+                    <div class="product-card" style="background:#f8f9ff;">
+                      <div class="product-icon life">&#x1F6E1;</div>
+                      <div class="product-info"><h3>寿险</h3><p>家庭保障，传承爱与责任</p></div>
+                      <div class="product-arrow">&rsaquo;</div>
+                    </div>
+                  </div>
+                  <!-- 重疾险（默认隐藏，由上方展开） -->
+                  <div class="product-card" id="product-critical-p1" style="display:none;">
+                    <div class="product-icon critical">&#x1F49B;</div>
+                    <div class="product-info"><h3>重疾险</h3><p>一次性给付，保障重大疾病</p></div>
+                    <div class="product-arrow">&rsaquo;</div>
+                  </div>
+                  <!-- 寿险（默认隐藏，由上方展开） -->
+                  <div class="product-card" id="product-life-p1" style="display:none;">
+                    <div class="product-icon life">&#x1F6E1;</div>
+                    <div class="product-info"><h3>寿险</h3><p>家庭保障，传承爱与责任</p></div>
+                    <div class="product-arrow">&rsaquo;</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 常见问题区（可展开） -->
+              <div style="padding:0 16px 24px;">
+                <!-- 常见问题标题栏（点击展开） -->
+                <div onclick="toggleFAQ('p1')" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;user-select:none;">
+                  <span style="font-size:18px;">&#x1F4AC;</span>
+                  <span style="font-size:15px;font-weight:700;color:#1a1a2e;">常见问题</span>
+                  <div style="margin-left:auto;width:28px;height:28px;background:#e8edf2;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                    <span id="faq-arrow-p1" style="font-size:12px;color:#666;">&#x25BC;</span>
+                  </div>
+                </div>
+                <!-- 问题列表（默认展开） -->
+                <div id="faq-list-p1" style="display:none;flex-direction:column;gap:8px;">
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">重疾险一年多少钱？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">医疗险怎么理赔？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">双录是什么？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 底部Tab -->
+              <div class="bottom-tabs">
+                <div class="tab-item active"><div class="tab-icon">&#x25C6;</div><div class="tab-label">首页</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F916;</div><div class="tab-label">AI投保</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F4CA;</div><div class="tab-label">我的保单</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F464;</div><div class="tab-label">我的</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P2: 隐私条款确认 --><div class="page-phone-frame">
+                <div class="page-label">&#x1F4F6; P1-2 &middot; AI投保首页2</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <!-- 顶部欢迎区 -->
+              <div class="home-header" style="background:linear-gradient(135deg,#5BA4F5,#7BB8F8);border-radius:0 0 8px 8px;padding-bottom:30px;margin-bottom:0;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div style="padding:12px 14px;">
+                    <div class="home-greeting">您好，欢迎回来！&#x1F44B;</div>
+                    <div class="home-sub">今天想了解哪类产品呢？</div>
+                  </div>
+                  <!-- 消息提醒按钮 -->
+                  <div style="position:relative;cursor:pointer;">
+                    <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F514;</div>
+                    <!-- 红点角标 -->
+                    <div style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:#ef4444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;">3</div>
+                  </div>
+                </div>
+                <div class="home-ai-bar">
+                  <div class="home-ai-icon">&#x1F916;</div>
+                  <div class="home-ai-text">我是瑞众保险智能助手小瑞，随时为您服务~</div>
+                </div>
+              </div>
+              
+
+              <!-- 消息提醒区 -->
+              <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+                <div class="notification-card" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                  <div style="width:36px;height:36px;background:rgba(239,68,68,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x1F4B3;</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:600;color:#1a1a2e;"><span style="color:#EF4444;font-size:20px;">&#x26A0;</span> 您有待支付保单</div>
+                    <div style="font-size:12px;color:#8896a6;margin-top:2px;">传家宝（鑫典藏）- 待支付 ¥8,580.00</div>
+                  </div>
+                  <div style="font-size:16px;color:#cbd5e1;">&rsaquo;</div>
+                </div>
+                <div class="notification-card" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                  <div style="width:36px;height:36px;background:rgba(34,197,94,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x2705;</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:600;color:#1a1a2e;">&#x1F389; 您的电子保单已生成</div>
+                    <div style="font-size:12px;color:#8896a6;margin-top:2px;">医疗险 - 保单号：RZ202604200001</div>
+                  </div>
+                  <div style="font-size:16px;color:#cbd5e1;">&rsaquo;</div>
+                </div>
+              </div>
+
+              <!-- 快捷功能入口（图标形式） -->
+              <div style="padding:0 16px 12px;">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#1E6FD9,#4A90E2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4CB;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">计划书</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4B0;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">微投</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#ef4444,#f87171);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F3AC;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">双录</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4A1;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">理赔</span>
+                  </div>
+                  <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;transition:all 0.2s;">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F916;</div>
+                    <span style="font-size:11px;color:#4a5568;font-weight:500;">智能体</span>
+                  </div>
+
+                  <!-- 更多入口 -->
+                  <div id="moreShortcuts-p12" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#f8fafc;border-radius:14px;border:1px dashed #cbd5e1;cursor:pointer;transition:all 0.2s;" onclick="toggleMoreShortcuts()">
+                    <div style="width:40px;height:40px;background:#e8edf2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#8896a6;">&#x22EE;</div>
+                    <span style="font-size:11px;color:#8896a6;font-weight:500;">更多</span>
+                  </div>
+                  <!-- 展开的更多功能（默认隐藏） -->
+                  <div id="moreShortcutsPanel-p12" style="width:100%;display:none;gap:10px;flex-wrap:wrap;margin-top:4px;">
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#10b981,#34d399);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x1F4CB;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">我的保单</span>
+                    </div>
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#ec4899,#f472b6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x23E9;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">继续投保</span>
+                    </div>
+                    <div class="shortcut-item" style="width:calc(25% - 8px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:#fff;border-radius:14px;border:1px solid #e8edf2;cursor:pointer;">
+                      <div style="width:40px;height:40px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">&#x2753;</div>
+                      <span style="font-size:11px;color:#4a5568;font-weight:500;">常见问题</span>
+                    </div>
+                    <div style="width:calc(25% - 8px);display:flex;justify-content:center;padding:14px 4px;cursor:pointer;" onclick="toggleMoreShortcuts()">
+                      <span style="font-size:12px;color:#8896a6;">收起 &#x25B2;</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 产品类型区 -->
+              <div class="home-products">
+                <div class="section-title">选择产品类型</div>
+                <div class="product-cards">
+                  <!-- 医疗险（可展开） -->
+                  <div class="product-card" onclick="toggleProducts('p12')" style="cursor:pointer;">
+                    <div class="product-icon medical">&#x1F3E5;</div>
+                    <div class="product-info"><h3>医疗险</h3><p>报销医疗费用，减轻看病负担</p></div>
+                    <div class="product-arrow" id="product-arrow-p12">&#x25BC;</div>
+                  </div>
+                  <!-- 展开的子产品 -->
+                  <div id="product-children-p12" style="display:none;padding-left:56px;border-left:2px solid #e8edf2;margin:-8px 16px 8px;padding-top:4px;">
+                    <div class="product-card" style="background:#f8f9ff;">
+                      <div class="product-icon critical">&#x1F49B;</div>
+                      <div class="product-info"><h3>重疾险</h3><p>一次性给付，保障重大疾病</p></div>
+                      <div class="product-arrow">&rsaquo;</div>
+                    </div>
+                    <div class="product-card" style="background:#f8f9ff;">
+                      <div class="product-icon life">&#x1F6E1;</div>
+                      <div class="product-info"><h3>寿险</h3><p>家庭保障，传承爱与责任</p></div>
+                      <div class="product-arrow">&rsaquo;</div>
+                    </div>
+                  </div>
+                  <!-- 重疾险（默认隐藏，由上方展开） -->
+                  <div class="product-card" id="product-critical-p12" style="display:none;">
+                    <div class="product-icon critical">&#x1F49B;</div>
+                    <div class="product-info"><h3>重疾险</h3><p>一次性给付，保障重大疾病</p></div>
+                    <div class="product-arrow">&rsaquo;</div>
+                  </div>
+                  <!-- 寿险（默认隐藏，由上方展开） -->
+                  <div class="product-card" id="product-life-p12" style="display:none;">
+                    <div class="product-icon life">&#x1F6E1;</div>
+                    <div class="product-info"><h3>寿险</h3><p>家庭保障，传承爱与责任</p></div>
+                    <div class="product-arrow">&rsaquo;</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 常见问题区（可展开） -->
+              <div style="padding:0 16px 24px;">
+                <!-- 常见问题标题栏（点击展开） -->
+                <div onclick="toggleFAQ('p12')" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;user-select:none;">
+                  <span style="font-size:18px;">&#x1F4AC;</span>
+                  <span style="font-size:15px;font-weight:700;color:#1a1a2e;">常见问题</span>
+                  <div style="margin-left:auto;width:28px;height:28px;background:#e8edf2;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                    <span id="faq-arrow-p12" style="font-size:12px;color:#666;">&#x25BC;</span>
+                  </div>
+                </div>
+                <!-- 问题列表（默认展开） -->
+                <div id="faq-list-p12" style="display:none;flex-direction:column;gap:8px;">
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">重疾险一年多少钱？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">医疗险怎么理赔？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                  <div class="faq-item" onclick="showPage('page-chat-plan')" style="background:#fff;border-radius:14px;border:1px solid #e8edf2;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                    <div style="font-size:14px;color:#1a1a2e;flex:1;">双录是什么？</div>
+                    <div style="font-size:14px;color:#cbd5e1;">&rsaquo;</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI输入栏 -->
+              <div style="padding:10px 16px 8px;display:flex;align-items:center;gap:10px;background:#f5f5f5;">
+                <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                  <input style="flex:1;min-width:0;padding:10px 14px;background:#fff;border:1px solid #e0e0e0;border-radius:20px;font-size:14px;color:#333;outline:none;" placeholder="输入您的问题...">
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">&#x1F3A4;</div>
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">&#x1F5BC;</div>
+                  </div>
+                </div>
+                <div style="width:36px;height:36px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;cursor:pointer;flex-shrink:0;">&#x27A4;</div>
+              </div>
+
+
+              <!-- 底部Tab -->
+              <div class="bottom-tabs">
+                <div class="tab-item active"><div class="tab-icon">&#x25C6;</div><div class="tab-label">首页</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F916;</div><div class="tab-label">AI投保</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F4CA;</div><div class="tab-label">我的保单</div></div>
+                <div class="tab-item"><div class="tab-icon">&#x1F464;</div><div class="tab-label">我的</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P2: 隐私条款确认 --><div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P2 &middot; 隐私条款确认</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">隐私条款</div>
+                <div style="width:28px;flex-shrink:0;"></div>
+              </div>
+              
+              </div>
+              
+              <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;">
+                <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
+                <div style="max-width:75%;position:relative;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">请您仔细阅读以下隐私条款，了解我们如何收集、使用和保护您的个人信息。如有疑问可随时联系我。</div>
+                  <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                </div>
+              </div>
+
+              <div class="privacy-page">
+                <div class="privacy-content" style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:12px;padding:16px;margin:16px;">
+                  <div style="text-align:center;font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">瑞众保险隐私政策</div>
+                  <p><strong>一、信息收集</strong><br>我们可能收集您的姓名、身份证号、联系方式、生物特征信息、健康信息等，用于身份核验和保险服务。</p><br>
+                  <p><strong>二、信息使用</strong><br>您的信息将用于：提供保险服务、身份核验、理赔处理、合规审查等合法目的。</p><br>
+                  <p><strong>三、信息共享</strong><br>未经您的同意，我们不会与任何第三方共享您的个人信息，法律法规另有规定的除外。</p><br>
+                  <p><strong>四、信息保护</strong><br>我们采用行业标准的安全技术和管理措施，保护您的个人信息不被未授权访问。</p><br>
+                  <p><strong>五、您的权利</strong><br>您有权查询、更正、删除您的个人信息。如有任何疑问，请联系客服。</p>
+                </div>
+                
+                <div style="text-align:center;margin:0 16px 12px;">
+                  <a href="#" style="color:#1677ff;font-size:14px;text-decoration:none;">了解更多保险条款 →</a>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px;margin:0 16px 12px;">
+                  <div id="privacyCheck-p1" onclick="togglePrivacy('p1')" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;cursor:pointer;background:#fff;flex-shrink:0;font-weight:bold;">✓</div>
+                  <div style="flex:1;font-size:14px;color:#666;">我已阅读并同意上述隐私条款</div>
+                </div>
+                <button id="privacyBtn" disabled onclick="togglePrivacy()" style="width:calc(100% - 32px);margin:0 16px 20px;padding:14px;background:#ccc;border:none;border-radius:12px;font-size:16px;font-weight:600;color:#fff;cursor:not-allowed;box-shadow:none;">继续投保</button>
+              </div>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+P3: 制定投保计划（AI对话） -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P3 &middot; 制定投保计划（AI对话）</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div style="display:flex;flex-direction:column;height:100%;">
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;flex-shrink:0;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">AI投保</div>
+                <div style="width:28px;flex-shrink:0;"></div>
+              </div>
+              
+
+              <div style="flex:1;overflow-y:auto;padding-bottom:8px;">
+              <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;">
+                <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
+                <div style="max-width:75%;position:relative;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">您好！请告诉我投保人的出生日期，方便我为您推荐合适的方案~</div>
+                  <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                </div>
+              </div>
+
+              <div style="padding:0 16px 0 56px;display:flex;justify-content:flex-start;">
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);display:flex;align-items:center;gap:10px;cursor:pointer;min-width:200px;">
+                  <span style="font-size:20px;">📅</span>
+                  <span style="font-size:14px;color:#333;">点击选择出生日期</span>
+                  <span style="margin-left:auto;font-size:14px;color:#1677ff;">›</span>
+                </div>
+              </div>
+
+              <div style="padding:8px 16px 0;display:flex;align-items:center;justify-content:flex-end;gap:8px;">
+                <div style="max-width:75%;position:relative;">
+                  <div style="width:0;height:0;border-right:6px solid #1677ff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;right:-5px;top:12px;filter:drop-shadow(1px 0 1px rgba(0,0,0,0.05));"></div>
+                  <div style="background:#1677ff;border-radius:16px 8px 16px 16px;padding:10px 14px;font-size:14px;color:#fff;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.1);">1985年3月</div>
+                </div>
+              </div>
+
+              <div style="padding:0 16px;display:flex;align-items:flex-start;gap:8px;">
+                <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
+                <div style="max-width:75%;position:relative;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">好的明白了！投保人性别是？</div>
+                  <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                </div>
+              </div>
+
+              <div style="padding:12px 16px 0 56px;display:flex;justify-content:flex-start;">
+                <div style="display:flex;gap:10px;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:10px 20px;font-size:14px;color:#333;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.06);">♂ 男</div>
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:10px 20px;font-size:14px;color:#333;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.06);">♀ 女</div>
+                </div>
+              </div>
+
+              <div style="padding:8px 16px 0;display:flex;align-items:center;justify-content:flex-end;gap:8px;">
+                <div style="max-width:75%;position:relative;">
+                  <div style="width:0;height:0;border-right:6px solid #1677ff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;right:-5px;top:12px;filter:drop-shadow(1px 0 1px rgba(0,0,0,0.05));"></div>
+                  <div style="background:#1677ff;border-radius:16px 8px 16px 16px;padding:10px 14px;font-size:14px;color:#fff;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.1);">&#x2642; 男</div>
+                </div>
+              </div>
+
+              <div style="padding:0 16px;display:flex;align-items:flex-start;gap:8px;">
+                <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🤖</div>
+                <div style="max-width:75%;position:relative;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">明白了！请选择投保人的职业类型：</div>
+                  <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                </div>
+              </div>
+
+              <div style="padding:12px 16px 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">一般职业</div>
+                  <div style="font-size:12px;color:#999;">内勤 · 教师 · 医生 · 文员</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">管理人员</div>
+                  <div style="font-size:12px;color:#999;">企业主 · 部门经理 · 主管</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">技术人员</div>
+                  <div style="font-size:12px;color:#999;">IT · 工程师 · 设计</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">运输人员</div>
+                  <div style="font-size:12px;color:#999;">司机 · 船员 · 快递</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">建筑人员</div>
+                  <div style="font-size:12px;color:#999;">施工 · 装修 · 安装</div>
+                </div>
+                <div style="background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-size:14px;font-weight:600;color:#333;">农林牧渔</div>
+                  <div style="font-size:12px;color:#999;">农业 · 林业 · 牧业 · 渔业</div>
+                </div>
+              </div>
+              </div>
+
+              <div style="padding:0 16px 4px;display:flex;flex-wrap:wrap;gap:8px;">
+                <button style="padding:8px 16px;background:#fff;border:1px solid #d9d9d9;border-radius:20px;font-size:13px;color:#333;cursor:pointer;">我想给家人投保</button>
+                <button style="padding:8px 16px;background:#fff;border:1px solid #d9d9d9;border-radius:20px;font-size:13px;color:#333;cursor:pointer;">保费多少</button>
+                <button style="padding:8px 16px;background:#fff;border:1px solid #d9d9d9;border-radius:10px;font-size:13px;color:#333;cursor:pointer;">有什么保障</button>
+              </div>
+              <div style="padding:10px 16px 20px;display:flex;align-items:center;gap:10px;background:#f5f5f5;border-top:1px solid #e8e8e8;">
+                <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                  <input style="flex:1;min-width:0;padding:10px 14px;background:#fff;border:1px solid #e0e0e0;border-radius:20px;font-size:14px;color:#333;outline:none;" placeholder="输入您的问题...">
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">🎤</div>
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">🖼️</div>
+                  </div>
+                </div>
+                <div style="width:36px;height:36px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;cursor:pointer;flex-shrink:0;">&#x27A4;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P4: 完善投保信息（OCR自动填） -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P4 &middot; 完善投保信息（OCR自动填）</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div style="display:flex;flex-direction:column;height:100%;">
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;flex-shrink:0;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">AI投保</div>
+                <div style="width:32px;flex-shrink:0;"></div>
+              </div>
+              
+
+              <div style="flex:1;overflow-y:auto;padding-bottom:8px;">
+              <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;">
+                <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div>
+                <div style="max-width:75%;position:relative;">
+                  <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">请上传投保人的身份证照片，我会自动帮您填入信息~</div>
+                  <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;margin:12px 16px;padding:16px;background:linear-gradient(135deg,rgba(22,119,255,0.06),rgba(22,119,255,0.04));border:1.5px solid rgba(22,119,255,0.3);border-radius:14px;">
+                <div style="width:44px;height:44px;background:rgba(22,119,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">&#x1F3F7;</div>
+                <div style="flex:1;">
+                  <div style="font-size:15px;font-weight:600;color:#1a1a2e;">身份证OCR识别</div>
+                  <div style="font-size:12px;color:#8896a6;margin-top:2px;">拍照或上传，系统自动填入信息</div>
+                </div>
+              </div>
+              
+              <div style="margin:0 16px 12px;background:#fff;border:1.5px solid #d0e4ff;border-radius:14px;box-shadow:0 2px 12px rgba(22,119,255,0.1);overflow:hidden;">
+                <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(22,119,255,0.08),rgba(22,119,255,0.04));border-bottom:1px solid #d0e4ff;display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:16px;">&#x2705;</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a3a8f;">投保人信息（已自动填入）</span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">姓名</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">李明 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">性别</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">男 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">出生日期</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">1985-03-15 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:#8896a6;">身份证号</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">110***********1234</span>
+                </div>
+              </div>
+              <div style="margin:16px 16px 0;background:#fff;border:1.5px solid #d0e4ff;border-radius:14px;box-shadow:0 2px 12px rgba(22,119,255,0.1);overflow:hidden;">
+                <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(22,119,255,0.08),rgba(22,119,255,0.04));border-bottom:1px solid #d0e4ff;display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:16px;">&#x2705;</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a3a8f;">被保险人信息</span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">姓名</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">李小梅 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">性别</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">女 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f4ff;">
+                  <span style="font-size:13px;color:#8896a6;">出生日期</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">2015-08-20 <span style="background:rgba(34,197,94,0.12);color:#15803d;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px;">OCR自动填</span></span>
+                </div>
+                <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:13px;color:#8896a6;">身份证号</span>
+                  <span style="font-size:14px;font-weight:600;color:#1a1a2e;">210***********5678</span>
+                </div>
+              </div>
+              <div style="margin:0 16px 12px;padding:12px 14px;background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(139,92,246,0.04));border:1px solid rgba(139,92,246,0.2);border-radius:12px;display:flex;align-items:flex-start;gap:10px;">
+                <div style="font-size:18px;flex-shrink:0;margin-top:1px;">&#x1F9EE;</div>
+                <div style="font-size:13px;color:#555;line-height:1.5;">AI推断：被保险人为投保人子女（年龄差31岁），已为您预填关系证明材料</div>
+              </div>
+              <div style="padding:0 16px 8px;">
+                <button style="width:100%;padding:12px;background:linear-gradient(135deg,#1677ff,#4090f0);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 3px 10px rgba(22,119,255,0.2);">继续下一步</button>
+              </div>
+              </div>
+              <div style="display:flex;align-items:center;padding:6px 12px 8px;gap:8px;flex-shrink:0;">
+                <input style="flex:1;min-width:0;padding:10px 14px;border:1.5px solid #e8e8e8;border-radius:24px;font-size:14px;background:#f5f6f8;color:#333;outline:none;" placeholder="输入您的问题...">
+                <div style="width:36px;height:36px;border-radius:50%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:#666;flex-shrink:0;">&#x1F3A4;</div>
+                <div style="width:36px;height:36px;border-radius:50%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:#666;flex-shrink:0;">&#x1F4CE;</div>
+                <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1677ff,#4090f0);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(22,119,255,0.3);">&#x27A4;</div>
+              </div>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P5: 电子签名 -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P5 &middot; 电子签名</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div><div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">电子签名</div><div style="width:28px;flex-shrink:0;"></div>
+              </div>
+              
+              <div class="chat-messages" style="padding-top:16px;">
+                <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;"><div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div><div style="max-width:75%;position:relative;"><div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">最后一步啦~请在下方签上您的大名，确认投保声明~</div><div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div></div></div>
+              <div style="background:#e8f4fd;border:1px solid #b3d9f7;border-radius:12px;padding:16px;margin:16px;">
+                <div style="text-align:center;font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">投保声明</div>
+                <p style="font-size:13px;color:#333;line-height:1.7;margin-bottom:0;">本人已认真阅读并充分理解上述保险条款、投保须知及重要提示，确认上述内容真实、准确、完整。本人同意以电子签名方式签署本投保单，电子签名与亲笔签名具有同等法律效力。本人知悉并同意将投保信息用于瑞众保险公司提供保险服务及相关合法用途。</p>
+              </div>
+
+              <div style="background:#fff;border:2px dashed #B3D9F7;border-radius:10px;padding:20px;text-align:center;margin:0 16px 16px;">
+                <div style="font-size:28px;margin-bottom:6px;">&#x270D;</div>
+                <div style="font-size:14px;color:#1677ff;font-weight:500;margin-bottom:4px;">点击此处手写签名</div>
+                <div style="font-size:12px;color:#999;">签名将作为电子合同有效凭证</div>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;margin:0 16px 12px;">
+                <div id="privacyCheck-other" onclick="togglePrivacy('other')" style="width:20px;height:20px;border:1px solid #ddd;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer;background:#1677ff;flex-shrink:0;font-weight:bold;">&#x2713;</div>
+                <div style="flex:1;font-size:14px;color:#666;">我已阅读并同意投保声明及电子签名授权</div>
+              </div>
+              <button id="confirmSubmitBtn" onclick="submitSignature()" style="width:calc(100% - 32px);margin:0 16px 20px;padding:14px;background:linear-gradient(135deg,#1677ff,#4096f0);border:none;border-radius:12px;font-size:16px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(22,119,255,0.25);">确认提交</button>
+<div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P6: 付款 -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P6 &middot; 付款</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">确认订单</div>
+                <div style="width:28px;flex-shrink:0;"></div>
+              </div>
+              
+              <div class="chat-messages" style="padding-top:16px;">
+                <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;"><div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div><div style="max-width:75%;position:relative;"><div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">太好了！信息全部确认无误，请完成最后一步——付款~</div><div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div></div></div><div class="order-summary" style="background:#fff;border-radius:12px;padding:16px;margin:0 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);"><div style="text-align:center;font-size:15px;font-weight:700;color:#1a1a1a;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #f0f0f0;">&#x1F4CB; 订单详情</div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">产品</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">传家宝（鑫典藏）</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">投保人</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">李明</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">被保险人</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">李子涵（子女）</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">缴费期限</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">10年</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">保额</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">50万元</span></div><div style="background:#FFF7E6;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">首年保费</span><span style="font-size:15px;color:#FA8C16;font-weight:700;">¥8,580.00</span></div></div><div style="padding:0 16px 8px;"><div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">选择支付方式</div><div style="display:flex;align-items:center;padding:14px 16px;background:#E6F4FF;border:2px solid #1677ff;border-radius:12px;margin-bottom:8px;"><div style="width:36px;height:36px;background:#1677ff;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:20px;">&#x1F3E6;</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#1a1a1a;">银行卡支付</div><div style="font-size:12px;color:#999;margin-top:2px;">支持主流银行借记卡</div></div><div style="width:20px;height:20px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;">&#x2713;</div></div><div style="display:flex;align-items:center;padding:14px 16px;background:#fff;border:1px solid #e8e8e8;border-radius:12px;margin-bottom:8px;"><div style="width:36px;height:36px;background:#07C160;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:20px;">&#x2705;</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#1a1a1a;">微信支付</div><div style="font-size:12px;color:#999;margin-top:2px;">微信安全支付</div></div><div style="width:20px;height:20px;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;"></div></div><div style="display:flex;align-items:center;padding:14px 16px;background:#fff;border:1px solid #e8e8e8;border-radius:12px;"><div style="width:36px;height:36px;background:#1677ff;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:20px;">&#x1F4B3;</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#1a1a1a;">支付宝</div><div style="font-size:12px;color:#999;margin-top:2px;">支付宝安全支付</div></div><div style="width:20px;height:20px;border:1px solid #ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;"></div></div></div><button class="pay-btn pay-btn-lg">确认支付 ¥8,580.00</button>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P7: 投保计划书预览 -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P7 &middot; 保单生成完成</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">投保成功</div>
+                <div style="width:28px;flex-shrink:0;"></div>
+              </div>
+                            <div class="chat-messages" style="padding-top:16px;">
+                <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;"><div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div><div style="max-width:75%;position:relative;"><div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">恭喜！您的保单已生成成功！我们已将电子保单发送至您的手机，请注意查收~ 如有任何问题，随时联系我。</div><div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div></div></div><div style="padding:40px 16px 16px;text-align:center;">
+                <!-- 成功动画 -->
+                <div style="width:80px;height:80px;background:linear-gradient(135deg,#22c55e,#34d399);border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 8px 24px rgba(34,197,94,0.3);animation:pulse 2s infinite;">
+                  &#x2714;
+                </div>
+                <style>@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}/* ===== PHONE SHELL / DEVICE FRAME ===== */
+.device-shell {
+  width: 410px;
+  height: 860px;
+  background: linear-gradient(145deg, #2a2a3e 0%, #1a1a2e 50%, #141428 100%);
+  border-radius: 52px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,0.06),
+    0 2px 4px rgba(0,0,0,0.3),
+    0 12px 40px rgba(0,0,0,0.6),
+    0 0 80px rgba(0,212,255,0.08),
+    inset 0 1px 1px rgba(255,255,255,0.08);
+  position: relative;
+  flex-shrink: 0;
+}
+.device-shell::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 34px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.5);
+}
+.device-shell::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 5px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+  z-index: 10;
+}
+.side-btn-left-top {
+  position: absolute;
+  left: -3px;
+  top: 140px;
+  width: 3px;
+  height: 28px;
+  background: #2a2a3e;
+  border-radius: 2px 0 0 2px;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.5);
+}
+.side-btn-left-bottom {
+  position: absolute;
+  left: -3px;
+  top: 190px;
+  width: 3px;
+  height: 50px;
+  background: #2a2a3e;
+  border-radius: 2px 0 0 2px;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.5);
+}
+.side-btn-right {
+  position: absolute;
+  right: -3px;
+  top: 175px;
+  width: 3px;
+  height: 60px;
+  background: #2a2a3e;
+  border-radius: 0 2px 2px 0;
+  box-shadow: inset 0 0 1px rgba(0,0,0,0.5);
+}
+.phone-body-shell {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+}
+
+</style>
+                <h2 style="font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">投保成功！</h2>
+                <p style="font-size:14px;color:#8896a6;margin-bottom:32px;">您的电子保单已生成</p>
+                <div style="background:#F5F8FF;border-radius:12px;padding:16px;margin:0 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);"><div style="text-align:center;font-size:15px;font-weight:700;color:#1a1a1a;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #f0f0f0;">&#x1F4CB; 保单信息</div><div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">保单号</span><span style="font-size:12px;color:#1a1a1a;font-weight:500;">RZ202604200001</span></div><div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">产品</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">传家宝（鑫典藏）</span></div><div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">生效日期</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">2026-05-01</span></div><div style="background:#FFF7E6;border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">首年保费</span><span style="font-size:15px;color:#FA8C16;font-weight:700;">¥8,580.00</span></div></div><!-- 双录提示卡片 -->
+                <div style="background:linear-gradient(135deg,rgba(239,68,68,0.06),rgba(239,68,68,0.04));border:1px solid rgba(239,68,68,0.2);border-radius:16px;padding:16px;margin-bottom:16px;text-align:left;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:36px;height:36px;background:rgba(239,68,68,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">&#x1F3AC;</div>
+                    <div>
+                      <div style="font-size:15px;font-weight:700;color:#1a1a2e;">&#x26A0; 您的保单需要进行双录确认</div>
+                      <div style="font-size:12px;color:#92400e;margin-top:2px;">根据监管要求，需完成双录后方可正式生效</div>
+                    </div>
+                  </div>
+                  <button style="width:100%;padding:14px;margin:0 0 12px;background:linear-gradient(135deg,#1677ff,#4096f0);border:none;border-radius:14px;font-size:16px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 6px 16px rgba(22,119,255,0.3);">&#x1F3AC; 双录确认</button>
+                </div>
+                <button style="width:100%;padding:14px;border:2px solid #e8edf2;border-radius:14px;font-size:16px;font-weight:600;background:#fff;color:#4a5568;cursor:pointer;">查看电子保单</button>
+              </div>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P10: 双录 -->
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F389; P8 &middot; 双录页</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">双录确认</div>
+                <div style="font-size:13px;color:#1677ff;flex-shrink:0;"></div>
+              </div>
+              <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;">
+                    <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div>
+                    <div style="max-width:75%;position:relative;">
+                      <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">您的保单需要进行双录确认，点击下方按钮将跳转至双录APP完成认证~</div>
+                      <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                    </div>
+                  </div>
+              <!-- 双录状态卡片 -->
+              <div style="margin:0 16px 16px;background:#fff;border-radius:16px;border:1px solid #e8edf2;overflow:hidden;">
+                <div style="padding:14px 16px;background:#fff7ed;border-bottom:1px solid #fde68a;display:flex;align-items:center;gap:10px;">
+                  <div style="width:36px;height:36px;background:rgba(245,158,11,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">&#x1F3AC;</div>
+                  <div>
+                    <div style="font-size:15px;font-weight:700;color:#92400e;">双录待完成</div>
+                    <div style="font-size:12px;color:#92400e;margin-top:2px;">传家宝（鑫典藏）| 保单号：RZ202604200001</div>
+                  </div>
+                </div>
+                <div style="padding:16px;">
+                  <div style="font-size:14px;color:#4a5568;line-height:1.7;margin-bottom:16px;">根据监管要求，投保重疾险/寿险达到一定保额时，需进行录音录像（双录）确认。您将跳转至双录APP完成认证，认证完成后自动返回。</div>
+                  <!-- 步骤 -->
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <div style="width:28px;height:28px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;flex-shrink:0;">1</div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:600;color:#1a1a2e;">跳转双录APP</div>
+                        <div style="font-size:12px;color:#8896a6;margin-top:2px;">自动跳转到腾讯电子签APP</div>
+                      </div>
+                      <div style="font-size:16px;color:#22c55e;">&#x2714;</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <div style="width:28px;height:28px;background:#f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;flex-shrink:0;">2</div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:600;color:#1a1a2e;">完成人脸识别+语音确认</div>
+                        <div style="font-size:12px;color:#8896a6;margin-top:2px;">按照APP指引完成操作</div>
+                      </div>
+                      <div style="font-size:16px;color:#f59e0b;">&#x23F3;</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <div style="width:28px;height:28px;background:#e8edf2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#8896a6;font-weight:700;flex-shrink:0;">3</div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:600;color:#8896a6;">自动返回本APP</div>
+                        <div style="font-size:12px;color:#cbd5e1;margin-top:2px;">双录完成后自动刷新保单状态</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 双录按钮 -->
+              <div style="padding:0 16px;margin-bottom:16px;">
+                <button style="width:100%;padding:14px;background:linear-gradient(135deg,#1677ff,#4096f0);border:none;border-radius:14px;font-size:16px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 6px 16px rgba(22,119,255,0.3);">
+                  &#x1F3AC; 启动双录APP
+                </button>
+              </div>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end pages-scroll -->
+
+    <!-- 右侧导航 -->
+    <div class="prototype-nav">
+      <div class="proto-title"><span>&#x1F4C1;</span> 瑞众保险 AI投保原型</div>
+      <div class="proto-section">
+        <div class="proto-section-label">通用</div>
+        <div class="proto-link"><span class="num">P0</span> 登录页</div>
+        <div class="proto-link"><span class="num">P1</span> AI投保首页（新版）</div>
+      </div>
+      <div class="proto-divider"></div>
+      <div class="proto-section">
+        <div class="proto-section-label">路径A &middot; 计划书先行</div>
+        <div class="proto-link"><span class="num">P2</span> 隐私条款确认</div>
+        <div class="proto-link"><span class="num">P3</span> 制定投保计划</div>
+        <div class="proto-link"><span class="num">P7</span> 计划书预览</div>
+        <div class="proto-link"><span class="num">P8</span> 确认保单信息</div>
+      </div>
+      <div class="proto-divider"></div>
+      <div class="proto-section">
+        <div class="proto-section-label">路径B &middot; 直接投保</div>
+        <div class="proto-link"><span class="num">P3</span> 制定投保计划（复用）</div>
+        <div class="proto-link"><span class="num">P4</span> 完善投保信息</div>
+        <div class="proto-link"><span class="num">P5</span> 电子签名</div>
+        <div class="proto-link"><span class="num">P6</span> 付款</div>
+      </div>
+      <div class="proto-divider"></div>
+      <div class="proto-section">
+        <div class="proto-section-label">流程完成</div>
+        <div class="proto-link"><span class="num">P9</span> 保单生成完成</div>
+        <div class="proto-link"><span class="num">P10</span> 双录页</div>
+      </div>
+      <div class="proto-divider"></div>
+      <div class="proto-section">
+        <div class="proto-section-label">设计说明</div>
+        <div style="font-size:11px;color:#64748b;line-height:1.8;padding:0 12px;">
+          <p style="margin-bottom:8px;">主题色：#1E6FD9 蓝色系</p>
+          <p style="margin-bottom:8px;">AI助手：机器人图标</p>
+          <p style="margin-bottom:8px;">交互：文字+按钮+语音</p>
+          <p style="margin-bottom:8px;">两条路径：计划书先行/直接投保</p>
+          <p>新增：双录跳转功能</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-wrapper -->
+</div><!-- end main-display -->
+
+<script>
+function showPage(id) {
+  var pages = ['page-login', 'main-display'];
+  pages.forEach(function(p) {
+    var el = document.getElementById(p);
+    if (el) {
+      if (p === id) {
+        el.classList.remove('page-hidden');
+        el.style.display = 'block';
+      } else {
+        el.classList.add('page-hidden');
+        el.style.display = 'none';
+      }
+    }
+  });
+}
+
+function togglePrivacy(page) {
+  var cid=page?'privacyCheck-'+page:'privacyCheck';
+  var check=document.getElementById(cid);
+  var btn=document.getElementById('privacyBtn');
+  if (check && btn) {
+    check.classList.toggle('checked');
+    var isChecked = check.classList.contains('checked');
+    if (isChecked) {
+      check.style.background = '#1677ff';
+      check.style.borderColor = '#1677ff';
+      check.style.color = '#fff';
+      btn.disabled = false;
+      btn.style.background = '#1677ff';
+      btn.style.cursor = 'pointer';
+      btn.style.boxShadow = '0 4px 12px rgba(30,111,217,0.3)';
+    } else {
+      check.style.background = '#fff';
+      check.style.borderColor = '#ddd';
+      check.style.color = 'transparent';
+      btn.disabled = true;
+      btn.style.background = '#ccc';
+      btn.style.cursor = 'not-allowed';
+      btn.style.boxShadow = 'none';
+    }
+  }
+}
+
+function toggleMoreShortcuts(page) {
+  var pid=page?'moreShortcutsPanel-'+page:'moreShortcutsPanel';
+  var bid=page?'moreShortcuts-'+page:'moreShortcuts';
+  var panel=document.getElementById(pid);
+  var moreBtn=document.getElementById(bid);
+  if (panel.style.display === 'none') {
+    panel.style.display = 'flex';
+    moreBtn.style.display = 'none';
+  } else {
+    panel.style.display = 'none';
+    moreBtn.style.display = 'flex';
+  }
+}
+
+// Slider verify
+(function() {
+  var slider = document.getElementById('sliderVerify');
+  var thumb = document.getElementById('sliderThumb');
+  var text = document.getElementById('sliderText');
+  if (!slider || !thumb) return;
+  var dragging = false;
+  var startX = 0;
+  var maxX = slider.offsetWidth - 48;
+
+  function onMove(clientX) {
+    var dx = clientX - startX;
+    var pct = Math.min(1, Math.max(0, dx / maxX));
+    thumb.style.left = (4 + pct * maxX) + 'px';
+    slider.querySelector('.slider-track').style.width = (pct * 100) + '%';
+    if (pct >= 0.98) {
+      slider.classList.add('verified');
+      text.textContent = '验证成功';
+    }
+  }
+
+  thumb.addEventListener('mousedown', function(e) {
+    dragging = true;
+    startX = e.clientX - thumb.offsetLeft;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (dragging) onMove(e.clientX);
+  });
+  document.addEventListener('mouseup', function() {
+    dragging = false;
+  });
+  thumb.addEventListener('touchstart', function(e) {
+    dragging = true;
+    startX = e.touches[0].clientX - thumb.offsetLeft;
+    e.preventDefault();
+  }, {passive: false});
+  document.addEventListener('touchmove', function(e) {
+    if (dragging) onMove(e.touches[0].clientX);
+  }, {passive: false});
+  document.addEventListener('touchend', function() {
+    dragging = false;
+  });
+})();
+</script>
+
+
+
+
+<script>
+function showPage(pageId) {
+  document.getElementById('page-login').style.display = 'none';
+  document.getElementById(pageId).style.display = 'block';
+}
+
+function toggleProducts(page){
+  var cid=page?'product-children-'+page:'product-children';
+  var aid=page?'product-arrow-'+page:'product-arrow';
+  var el=document.getElementById(cid);
+  var arrow=document.getElementById(aid);
+  if(el.style.display==='none'||el.style.display===''){
+    el.style.display='block';
+    if(arrow)arrow.innerHTML='&#x25B2;';
+  }else{
+    el.style.display='none';
+    if(arrow)arrow.innerHTML='&#x25BC;';
+  }
+}
+
+function toggleFAQ(page){
+  var id=page?'faq-list-'+page:'faq-list';
+  var el=document.getElementById(id);
+  var arrow=document.getElementById('faq-arrow-'+page);
+  if(!arrow)arrow=document.getElementById('faq-arrow');
+  if(el.style.display==='none'||el.style.display===''){
+    el.style.display='flex';
+    if(arrow)arrow.innerHTML='&#x25B2;';
+  }else{
+    el.style.display='none';
+    if(arrow)arrow.innerHTML='&#x25BC;';
+  }
+}
+</script>
+</body>
+</html>
+      <div class="page-phone-frame">
+                <div class="page-label">&#x1F4CB; P9 &middot; 投保计划书预览（路径A）</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div>
+                <div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">投保计划书</div>
+                <div style="font-size:13px;color:#1677ff;flex-shrink:0;"></div>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-steps">
+                  <div class="progress-step done">&#x1F4F1;</div>
+                  <div class="progress-step done">&#x1F512;</div>
+                  <div class="progress-step done">&#x1F4AC;</div>
+                  <div class="progress-step active">&#x1F4C4;</div>
+                  <div class="progress-step">&#x1F3DB;</div>
+                  <div class="progress-step">&#x270F;</div>
+                  <div class="progress-step">&#x1F4B3;</div>
+                  <div class="progress-step">&#x1F4CB;</div>
+                  <div class="progress-step">&#x2705;</div>
+                </div>
+                <div class="progress-label">计划书预览</div>
+              </div>
+              <div class="plan-doc" style="padding-top:12px;">
+                <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;">
+                    <div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div>
+                    <div style="max-width:75%;position:relative;">
+                      <div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">根据您提供的信息，我为您生成了这份计划书~请确认后我们可以继续投保~</div>
+                      <div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div>
+                    </div>
+                  </div>
+                <div style="background:#fff;border-radius:12px;border:1px solid #e8e8e8;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fafafa;border-bottom:1px solid #f0f0f0;">
+                      <span style="font-size:16px;">&#x1F3E5;</span>
+                      <span style="font-size:14px;font-weight:700;color:#1a1a1a;">基本信息</span>
+                    </div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">计划名称</span><span style="color:#1a1a1a;font-weight:500;">传家宝（鑫典藏）保障计划</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">适用险种</span><span style="color:#1a1a1a;font-weight:500;">寿险 + 重疾</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">增值服务</span><span style="color:#1a1a1a;font-weight:500;">就医绿通 / 二次诊断</span></div>
+                  </div>
+                <div style="background:#fff;border-radius:12px;border:1px solid #e8e8e8;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fafafa;border-bottom:1px solid #f0f0f0;">
+                      <span style="font-size:16px;">&#x1F464;</span>
+                      <span style="font-size:14px;font-weight:700;color:#1a1a1a;">被保险人信息</span>
+                    </div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">姓名</span><span style="color:#1a1a1a;font-weight:500;">李子涵</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">关系</span><span style="color:#1a1a1a;font-weight:500;">子女</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">出生日期</span><span style="color:#1a1a1a;font-weight:500;">2016-08-20</span></div>
+                  </div>
+                <div style="background:#fff;border-radius:12px;border:1px solid #e8e8e8;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fafafa;border-bottom:1px solid #f0f0f0;">
+                      <span style="font-size:16px;">&#x1F3C4;</span>
+                      <span style="font-size:14px;font-weight:700;color:#1a1a1a;">保障内容</span>
+                    </div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">主险保障</span><span style="color:#1a1a1a;font-weight:500;">身故/全残 50万</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">重疾保障</span><span style="color:#1a1a1a;font-weight:500;">覆盖120种重疾</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">轻症保障</span><span style="color:#1a1a1a;font-weight:500;">覆盖60种轻症</span></div>
+                  </div>
+                <div style="background:#fff;border-radius:12px;border:1px solid #e8e8e8;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:#fafafa;border-bottom:1px solid #f0f0f0;">
+                      <span style="font-size:16px;">&#x1F4B0;</span>
+                      <span style="font-size:14px;font-weight:700;color:#1a1a1a;">保单利益</span>
+                    </div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">缴费期限</span><span style="color:#1a1a1a;font-weight:500;">10年</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">首年保费</span><span style="color:#1a1a1a;font-weight:500;">¥8,580.00</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;"><span style="color:#595959;">保险期间</span><span style="color:#1a1a1a;font-weight:500;">终身</span></div>
+                  </div>
+                <div style="margin:0 16px 12px;padding:14px;background:#FFF7ED;border:1px solid #FFE4CC;border-radius:12px;">
+                  <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px;">&#x26A0; 风险提示</div>
+                  <div style="font-size:12px;color:#92400e;line-height:1.6;">本计划书仅供参考，实际保障内容以保险条款为准。投保前请认真阅读条款，如有疑问请咨询客服。</div>
+                </div>
+                <button style="display:block;width:calc(100% - 32px);margin:0 16px 12px;padding:12px;background:#fff;border:1.5px solid #1677ff;border-radius:12px;font-size:14px;font-weight:600;color:#1677ff;cursor:pointer;box-shadow:none;">&#x1F517; 分享给顾问 / 家人</button>
+                <button style="display:block;width:calc(100% - 32px);margin:0 16px 16px;padding:14px;background:linear-gradient(135deg,#1677ff,#4096f0);border:none;border-radius:14px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(22,119,255,0.3);">&#x2714; 确认投保</button>
+              </div>
+              <div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P9: 确认保单信息 -->
+      
+      <div class="page-phone-frame">
+                <div class="page-label">&#x2705; P10 &middot; 确认保单信息</div>
+        <div class="phone-screen-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div>
+              <div style="position:relative;display:flex;align-items:center;padding:12px 16px;">
+                <div style="font-size:28px;flex-shrink:0;">&#x2039;</div><div style="flex:1;text-align:center;font-size:18px;font-weight:600;color:#333;">确认保单</div><div style="width:28px;flex-shrink:0;"></div>
+              </div>
+              <div class="chat-messages" style="padding-top:16px;">
+                <div style="padding:16px 16px 0;display:flex;align-items:flex-start;gap:8px;"><div style="width:32px;height:32px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#x1F916;</div><div style="max-width:75%;position:relative;"><div style="background:#fff;border:1px solid #e8e8e8;border-radius:8px 16px 16px 16px;padding:10px 14px;font-size:14px;color:#333;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,0.08);">请确认以下保单信息是否正确~如有错误可以返回修改~</div><div style="width:0;height:0;border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;position:absolute;left:-5px;top:12px;filter:drop-shadow(-1px 0 1px rgba(0,0,0,0.05));"></div></div></div><div class="info-confirm-card" style="background:#fff;border-radius:12px;padding:16px;margin:0 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);"><div style="text-align:center;font-size:15px;font-weight:700;color:#1a1a1a;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #f0f0f0;">&#x2705; 保单确认信息</div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">投保人</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">李明</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">被保险人</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">李子涵（子女）</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">险种</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">传家宝（鑫典藏）</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">保额</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">50万元</span></div><div style="background:#F5F8FF;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">缴费期限</span><span style="font-size:13px;color:#1a1a1a;font-weight:500;">10年</span></div><div style="background:#FFF7E6;border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:#666;">首年保费</span><span style="font-size:15px;color:#FA8C16;font-weight:700;">¥8,580.00</span></div></div>
+              <div style="padding:0 16px 8px;">
+                <button style="display:block;width:92%;margin:0 auto;padding:18px;background:linear-gradient(135deg,#1677ff,#4096f0);border:none;border-radius:14px;font-size:20px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(22,119,255,0.3);">确认无误 &#x203A;</button>
+              </div>
+              <div style="background:#f5f5f5;border-top:1px solid #e8e8e8;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+                <div style="flex:1;display:flex;align-items:center;gap:8px;">
+                  <input style="flex:1;min-width:0;padding:10px 14px;background:#fff;border:1px solid #e0e0e0;border-radius:20px;font-size:14px;color:#333;outline:none;" placeholder="输入您的问题...">
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">&#x1F4F7;</div>
+                    <div style="width:34px;height:34px;background:#fff;border:1px solid #e0e0e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:#666;">&#x1F5BC;</div>
+                  </div>
+                </div>
+                <div style="width:36px;height:36px;background:#1677ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;cursor:pointer;flex-shrink:0;">&#x27A4;</div>
+              </div>
+<div class="spacer-bottom"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </div>
+
+      <!-- P10: 保单完成 -->
